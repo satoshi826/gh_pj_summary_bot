@@ -1,0 +1,11 @@
+{
+  "apps": {
+    "E093Z5UUW0M": {
+      "app_id": "A093S6W13E3",
+      "enterprise_id": "E093Z5UUW0M",
+      "team_domain": "sandbox-mu826",
+      "team_id": "E093Z5UUW0M"
+    }
+  },
+  "default": "sandbox-mu826"
+}

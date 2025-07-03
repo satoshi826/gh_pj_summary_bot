@@ -1,18 +1,10 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
 import { SampleFunctionDefinition } from "../functions/sample_function.ts";
 
-/**
- * A workflow is a set of steps that are executed in order.
- * Each step in a workflow is a function.
- * https://api.slack.com/automation/workflows
- *
- * This workflow uses interactivity. Learn more at:
- * https://api.slack.com/automation/forms#add-interactivity
- */
 const SampleWorkflow = DefineWorkflow({
   callback_id: "sample_workflow",
-  title: "Sample workflow",
-  description: "A sample workflow",
+  title: "シンプルメッセージ送信",
+  description: "このチャンネルにメッセージをシンプルに送信するワークフロー",
   input_parameters: {
     properties: {
       interactivity: {
@@ -29,54 +21,31 @@ const SampleWorkflow = DefineWorkflow({
   },
 });
 
-/**
- * For collecting input from users, we recommend the
- * OpenForm Slack function as a first step.
- * https://api.slack.com/automation/functions#open-a-form
- */
 const inputForm = SampleWorkflow.addStep(
   Schema.slack.functions.OpenForm,
   {
-    title: "Send message to channel",
+    title: "メッセージを送信",
     interactivity: SampleWorkflow.inputs.interactivity,
-    submit_label: "Send message",
+    submit_label: "送信する",
     fields: {
       elements: [{
-        name: "channel",
-        title: "Channel to send message to",
-        type: Schema.slack.types.channel_id,
-        default: SampleWorkflow.inputs.channel,
-      }, {
         name: "message",
-        title: "Message",
+        title: "メッセージ内容",
         type: Schema.types.string,
         long: true,
       }],
-      required: ["channel", "message"],
+      required: ["message"],
     },
   },
 );
 
-/**
- * Custom functions are reusable building blocks
- * of automation deployed to Slack infrastructure. They
- * accept inputs, perform calculations, and provide
- * outputs, just like typical programmatic functions.
- * https://api.slack.com/automation/functions/custom
- */
 const sampleFunctionStep = SampleWorkflow.addStep(SampleFunctionDefinition, {
   message: inputForm.outputs.fields.message,
   user: SampleWorkflow.inputs.user,
 });
 
-/**
- * SendMessage is a Slack function. These are
- * Slack-native actions, like creating a channel or sending
- * a message and can be used alongside custom functions in a workflow.
- * https://api.slack.com/automation/functions
- */
 SampleWorkflow.addStep(Schema.slack.functions.SendMessage, {
-  channel_id: inputForm.outputs.fields.channel,
+  channel_id: SampleWorkflow.inputs.channel,
   message: sampleFunctionStep.outputs.updatedMsg,
 });
 
