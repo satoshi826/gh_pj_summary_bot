@@ -17,13 +17,7 @@ const GitHubProvider = DefineOAuth2Provider({
     authorization_url: "https://github.com/login/oauth/authorize",
     token_url: "https://github.com/login/oauth/access_token",
     client_id: Deno.env.get("GITHUB_CLIENT_ID")!,
-    scope: [
-      "repo",
-      "read:org",
-      "read:user",
-      "user:email",
-      "read:enterprise",
-    ],
+    scope: ["read:project"],
     identity_config: {
       url: "https://api.github.com/user",
       account_identifier: "$.login",
